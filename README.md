@@ -1,2 +1,80 @@
 # jasper_reports
 jasper
+
+
+Haproxy Config
+```
+global
+  log         127.0.0.1 syslog
+  maxconn     1000
+  user        haproxy
+  group       haproxy
+  daemon
+  tune.ssl.default-dh-param 4096
+  ssl-default-bind-options no-sslv3 no-tls-tickets
+  ssl-default-bind-ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+
+
+defaults
+  log  global
+  mode  http
+  option  httplog
+  option  dontlognull
+  option  http-server-close
+  option  forwardfor except 127.0.0.0/8
+  option  redispatch
+  option  contstats
+  retries  3
+  timeout  http-request 10s
+  timeout  queue 1m
+  timeout  connect 10s
+  timeout  client 1m
+  timeout  server 1m
+  timeout  check 10s
+
+###########################################
+#
+# HAProxy Stats page
+#
+###########################################
+listen stats
+  bind *:9090
+  mode  http
+  maxconn  10
+  stats  enable
+  stats  hide-version
+  stats  realm Haproxy\ Statistics
+  stats  uri /
+  stats  auth admin:GPSc0ntr0l1
+
+###########################################
+#
+# Front end for all
+#
+###########################################
+frontend ALL
+  bind   *:80
+  bind   *:443 ssl crt /etc/haproxy/certs/dudewhereismy.mx.pem
+  mode   http
+######
+
+# Define hosts
+  acl host_rs hdr(host) -i reports.dudewhereismy.mx
+  acl host_test hdr(host) -i test.dudewhereismy.mx
+  acl is_root path -i /
+  redirect scheme https code 301 if !{ ssl_fc }
+  redirect code 301 location /jasperserver-pro if is_root
+
+# Direct hosts to backend
+  use_backend rs if host_rs
+
+###########################################
+#
+# Back end for Jasper
+#
+###########################################
+
+backend rs
+  balance         roundrobin
+  server          jasper 127.0.0.1:8080 check
+```
