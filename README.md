@@ -1,4 +1,12 @@
 # jasper_reports
+
+Modify .bashrc
+```
+export AWS_ACCESS_KEY_ID=XXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=XXXXX
+export AWS_REGION=us-east
+```
+
 jasper
 
 
