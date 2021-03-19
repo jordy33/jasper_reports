@@ -62,27 +62,33 @@ listen stats
 ###########################################
 frontend ALL
   bind   *:80
-  bind   *:443 ssl crt /etc/haproxy/certs/dudewhereismy.mx.pem
+  bind   *:443 ssl crt /etc/haproxy/certs/dudewhereismy.mx.pem crt /etc/haproxy/certs/dudewhereismy.com.mx.pem
+
   mode   http
 ######
 
 # Define hosts
   acl host_rs hdr(host) -i reports.dudewhereismy.mx
-  acl host_test hdr(host) -i test.dudewhereismy.mx
+  acl host_prs hdr(host) -i reports.dudewhereismy.com.mx
   acl is_root path -i /
-  redirect scheme https code 301 if !{ ssl_fc }
+redirect scheme https code 301 if !{ ssl_fc }
   redirect code 301 location /jasperserver-pro if is_root
 
 # Direct hosts to backend
   use_backend rs if host_rs
+  use_backend rs if host_prs
 
 ###########################################
 #
-# Back end for Jasper
+# Back end for foo
 #
 ###########################################
 
 backend rs
+  #http-response add-header 
+  #rspadd Access-Control-Allow-Origin:\ *
+  #rspadd Access-Control-Max-Age:\ 31536000
   balance         roundrobin
-  server          jasper 127.0.0.1:8080 check
+  server          sun1 127.0.0.1:8080 check
+
 ```
