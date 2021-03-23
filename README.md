@@ -92,3 +92,9 @@ backend rs
   server          sun1 127.0.0.1:8080 check
 
 ```
+
+Create the file updatecerts.sh
+```
+sftp -i webserver.pem ubuntu@sun.dudewhereismy.mx:/etc/haproxy/certs/dudewhereismy.mx.pem /etc/haproxy/certs/dudewhereismy.mx.pem
+sftp -i webserver.pem ubuntu@sun.dudewhereismy.com.mx:/etc/haproxy/certs/dudewhereismy.com.mx.pem /etc/haproxy/certs/dudewhereismy.com.mx.pem
+```
