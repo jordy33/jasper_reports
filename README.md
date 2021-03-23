@@ -93,8 +93,13 @@ backend rs
 
 ```
 
-Create the file updatecerts.sh
+Create the file updatecerts.sh at /root
 ```
 sftp -i webserver.pem ubuntu@sun.dudewhereismy.mx:/etc/haproxy/certs/dudewhereismy.mx.pem /etc/haproxy/certs/dudewhereismy.mx.pem
 sftp -i webserver.pem ubuntu@sun.dudewhereismy.com.mx:/etc/haproxy/certs/dudewhereismy.com.mx.pem /etc/haproxy/certs/dudewhereismy.com.mx.pem
+```
+
+Crontab -e
+```
+0 5 * * 1 /root/updatecerts.sh 
 ```
